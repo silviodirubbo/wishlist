@@ -29,22 +29,28 @@ export function MoodboardBoard({
   const { containerRef, setTileRef, getTileStyle, containerHeight } = useMasonry(layoutItems);
 
   return (
-    <div
-      ref={containerRef}
-      className="relative mx-auto max-w-[1400px] px-12 pb-20"
-      style={{ height: containerHeight }}
-    >
-      {items.map((item) => (
-        <div key={item.id} ref={setTileRef(item.id)} style={getTileStyle(item.id)}>
-          <ItemTile
-            item={item}
-            onClick={() => onItemClick(item)}
-            onToggleBought={() => onToggleBought(item)}
-          />
+    <div className="mx-auto max-w-[1400px] px-4 pb-20 sm:px-12">
+      {/*
+       * This inner div (not the padded wrapper above) is what useMasonry
+       * measures and positions tiles against — absolutely positioned
+       * children use their positioned ancestor's *padding box* as their
+       * containing block, so padding on the same element a tile is
+       * absolutely positioned within is silently ignored. Padding has to
+       * live one level up instead.
+       */}
+      <div ref={containerRef} className="relative" style={{ height: containerHeight }}>
+        {items.map((item) => (
+          <div key={item.id} ref={setTileRef(item.id)} style={getTileStyle(item.id)}>
+            <ItemTile
+              item={item}
+              onClick={() => onItemClick(item)}
+              onToggleBought={() => onToggleBought(item)}
+            />
+          </div>
+        ))}
+        <div ref={setTileRef(ADD_TILE_ID)} style={getTileStyle(ADD_TILE_ID)}>
+          <AddItemTile onClick={onAddItem} />
         </div>
-      ))}
-      <div ref={setTileRef(ADD_TILE_ID)} style={getTileStyle(ADD_TILE_ID)}>
-        <AddItemTile onClick={onAddItem} />
       </div>
     </div>
   );

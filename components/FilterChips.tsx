@@ -9,14 +9,14 @@ type FilterChipsProps = {
 
 export function FilterChips({ chips, active, onSelect, onShuffle }: FilterChipsProps) {
   return (
-    <div className="mx-auto flex max-w-[1400px] flex-wrap items-center gap-2 px-12 pb-7">
+    <div className="mx-auto flex max-w-[1400px] flex-wrap items-center gap-2 px-4 pb-7 sm:px-12">
       {chips.map((chip) => {
         const isActive = chip === active;
         return (
           <button
             key={chip}
             onClick={() => onSelect(chip)}
-            className={`cursor-pointer whitespace-nowrap rounded-full border px-4 py-[7px] text-[13px] transition-colors ${
+            className={`cursor-pointer touch-manipulation rounded-full border px-4 py-[10px] text-[13px] whitespace-nowrap transition-colors sm:py-[7px] ${
               isActive
                 ? "border-ink bg-ink text-paper"
                 : "border-sand text-mocha hover:border-mocha"

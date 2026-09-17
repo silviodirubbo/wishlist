@@ -50,7 +50,7 @@ export function BudgetSettingsModal({
       <h2 className="mb-6 font-serif text-xl font-medium">{year} budget</h2>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="flex gap-3">
-          <div className="flex flex-1 flex-col gap-1">
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
             <label className="text-xs text-mocha">Amount</label>
             <input
               type="number"

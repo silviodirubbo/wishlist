@@ -20,11 +20,11 @@ export function Modal({ onClose, children }: ModalProps) {
   return (
     <div
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 px-6 backdrop-blur-[2px]"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 px-4 backdrop-blur-[2px] sm:px-6"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-[20px] bg-paper p-8 shadow-xl"
+        className="max-h-[90vh] w-full max-w-lg overflow-y-auto overflow-x-hidden rounded-[20px] bg-paper p-5 shadow-xl sm:p-8"
       >
         {children}
       </div>

@@ -99,7 +99,7 @@ export function ItemForm({
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
         <label className="text-xs text-mocha">Product link</label>
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row">
           <input
             type="url"
             value={url}
@@ -108,13 +108,13 @@ export function ItemForm({
               maybeAutoSuggestCategory(name, e.target.value);
             }}
             placeholder="https://…"
-            className="flex-1 rounded-lg border border-sand bg-transparent px-3 py-2 text-sm outline-none focus:border-sienna"
+            className="min-w-0 flex-1 rounded-lg border border-sand bg-transparent px-3 py-2 text-sm outline-none focus:border-sienna"
           />
           <button
             type="button"
             onClick={handleFetchDetails}
             disabled={!url.trim() || fetching}
-            className="cursor-pointer whitespace-nowrap rounded-lg border border-sand px-3 py-2 text-sm text-mocha transition-colors hover:border-sienna hover:text-sienna disabled:cursor-default disabled:opacity-50"
+            className="shrink-0 cursor-pointer rounded-lg border border-sand px-3 py-2 text-sm whitespace-nowrap text-mocha transition-colors hover:border-sienna hover:text-sienna disabled:cursor-default disabled:opacity-50"
           >
             {fetching ? "Fetching…" : "Fetch details"}
           </button>
@@ -138,7 +138,7 @@ export function ItemForm({
       </div>
 
       <div className="flex gap-3">
-        <div className="flex flex-1 flex-col gap-1">
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
           <label className="text-xs text-mocha">Price</label>
           <input
             type="number"

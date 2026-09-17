@@ -51,13 +51,17 @@ export function ItemTile({ item, onClick, onToggleBought }: ItemTileProps) {
         }}
         aria-label={isBought ? "Mark as wanted" : "Mark as bought"}
         aria-pressed={isBought}
-        className={`absolute bottom-3 right-3 flex h-[26px] w-[26px] items-center justify-center rounded-full border-2 text-[13px] transition-colors ${
-          isBought
-            ? "border-moss/75 bg-moss/75 text-white hover:border-moss hover:bg-moss"
-            : "border-moss/50 bg-white/50 text-moss/80 hover:border-moss hover:bg-white hover:text-moss"
-        }`}
+        className="group/checkbox absolute right-0 bottom-0 flex h-11 w-11 cursor-pointer items-center justify-center"
       >
-        {isBought ? "✓" : ""}
+        <span
+          className={`flex h-[26px] w-[26px] items-center justify-center rounded-full border-2 text-[13px] transition-colors ${
+            isBought
+              ? "border-moss/75 bg-moss/75 text-white group-hover/checkbox:border-moss group-hover/checkbox:bg-moss"
+              : "border-moss/50 bg-white/50 text-moss/80 group-hover/checkbox:border-moss group-hover/checkbox:bg-white group-hover/checkbox:text-moss"
+          }`}
+        >
+          {isBought ? "✓" : ""}
+        </span>
       </button>
 
       <div className="tile-overlay-caption absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/85 via-ink/35 to-transparent py-4 pr-12 pl-4">
