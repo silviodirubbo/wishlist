@@ -26,3 +26,31 @@ body {
   background: var(--paper);
   color: var(--ink);
 }
+
+/*
+ * Tile overlay reveal: on devices with real hover (mouse/trackpad), the
+ * caption/badge/heart/checkbox stay hidden until the tile is hovered, so
+ * the moodboard reads as image-only by default. On touch/coarse-pointer
+ * devices (no true :hover), everything stays visible at all times —
+ * tap-to-edit is unaffected either way since it isn't gated by this.
+ */
+@media (hover: hover) and (pointer: fine) {
+  .tile-overlay {
+    opacity: 0;
+    transition: opacity 200ms ease;
+  }
+
+  .tile-overlay-caption {
+    opacity: 0;
+    transform: translateY(6px);
+    transition:
+      opacity 200ms ease,
+      transform 200ms ease;
+  }
+
+  .group:hover .tile-overlay,
+  .group:hover .tile-overlay-caption {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
