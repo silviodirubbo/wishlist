@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { BudgetIndicator } from "./BudgetIndicator";
 
 type TopBarProps = {
@@ -19,8 +20,11 @@ export function TopBar({
 }: TopBarProps) {
   return (
     <div className="mx-auto flex max-w-[1400px] items-center justify-between px-12 py-7">
-      <div className="font-serif text-[22px] font-medium tracking-[-0.01em]">
-        wishlist<span className="text-sienna">.</span>
+      <div className="flex items-center gap-2.5">
+        <Image src="/wishlist-mark.svg" alt="" width={30} height={30} />
+        <div className="font-serif text-[22px] font-medium tracking-[-0.01em]">
+          wishlist<span className="text-sienna">.</span>
+        </div>
       </div>
       <div className="flex items-center gap-7">
         <BudgetIndicator
