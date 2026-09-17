@@ -51,10 +51,10 @@ export function ItemTile({ item, onClick, onToggleBought }: ItemTileProps) {
         }}
         aria-label={isBought ? "Mark as wanted" : "Mark as bought"}
         aria-pressed={isBought}
-        className={`tile-overlay absolute bottom-3 right-3 flex h-[26px] w-[26px] items-center justify-center rounded-full border-2 text-[13px] transition-colors ${
+        className={`absolute bottom-3 right-3 flex h-[26px] w-[26px] items-center justify-center rounded-full border-2 text-[13px] transition-colors ${
           isBought
-            ? "border-moss bg-moss text-white"
-            : "border-moss bg-white/90 text-moss hover:bg-moss/10"
+            ? "border-moss/75 bg-moss/75 text-white hover:border-moss hover:bg-moss"
+            : "border-moss/50 bg-white/50 text-moss/80 hover:border-moss hover:bg-white hover:text-moss"
         }`}
       >
         {isBought ? "✓" : ""}

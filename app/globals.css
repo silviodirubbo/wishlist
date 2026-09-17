@@ -34,6 +34,17 @@ body {
  * devices (no true :hover), everything stays visible at all times —
  * tap-to-edit is unaffected either way since it isn't gated by this.
  */
+/*
+ * The caption is purely decorative text — it must never intercept clicks
+ * meant for the checkbox toggle, which shares its bottom-right corner and
+ * renders outside this reveal system on purpose. This applies on every
+ * device: even at opacity 0 (below), an element still receives clicks
+ * unless pointer-events is turned off.
+ */
+.tile-overlay-caption {
+  pointer-events: none;
+}
+
 @media (hover: hover) and (pointer: fine) {
   .tile-overlay {
     opacity: 0;
