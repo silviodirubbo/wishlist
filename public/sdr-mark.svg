@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 110" width="110" height="110">
+  <!-- SDR personal mark — Silvio di Rubbo -->
+  <!-- Outer circle (D arc) -->
+  <circle cx="55" cy="55" r="42" fill="none" stroke="#1A1814" stroke-width="2"/>
+  <!-- Central filled accent dot -->
+  <circle cx="55" cy="55" r="14" fill="#2C4A3E"/>
+  <!-- S curve through centre -->
+  <path d="M 30,36 C 30,36 44,44 55,55 C 66,66 80,72 82,72" fill="none" stroke="#1A1814" stroke-width="2" stroke-linecap="round"/>
+  <!-- R leg -->
+  <path d="M 55,55 L 80,84" fill="none" stroke="#1A1814" stroke-width="2" stroke-linecap="round"/>
+</svg>
