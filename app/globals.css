@@ -28,11 +28,10 @@ body {
 }
 
 /*
- * Tile overlay reveal: on devices with real hover (mouse/trackpad), the
- * caption/badge/heart/checkbox stay hidden until the tile is hovered, so
- * the moodboard reads as image-only by default. On touch/coarse-pointer
- * devices (no true :hover), everything stays visible at all times —
- * tap-to-edit is unaffected either way since it isn't gated by this.
+ * Tile overlay reveal: image-only by default on every device. Devices with
+ * real hover (mouse/trackpad) reveal on :hover. Touch/coarse-pointer
+ * devices have no :hover, so ItemTile toggles a JS-driven `.is-revealed`
+ * class on tap instead (see the pointer-gesture handling in ItemTile.tsx).
  */
 /*
  * The caption is purely decorative text — it must never intercept clicks
@@ -45,20 +44,26 @@ body {
   pointer-events: none;
 }
 
+.tile-overlay {
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
+.tile-overlay-caption {
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease;
+}
+
+.group.is-revealed .tile-overlay,
+.group.is-revealed .tile-overlay-caption {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 @media (hover: hover) and (pointer: fine) {
-  .tile-overlay {
-    opacity: 0;
-    transition: opacity 200ms ease;
-  }
-
-  .tile-overlay-caption {
-    opacity: 0;
-    transform: translateY(6px);
-    transition:
-      opacity 200ms ease,
-      transform 200ms ease;
-  }
-
   .group:hover .tile-overlay,
   .group:hover .tile-overlay-caption {
     opacity: 1;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMasonry } from "@/hooks/useMasonry";
 import type { Item } from "@/lib/types";
 import { AddItemTile } from "./AddItemTile";
@@ -28,6 +28,24 @@ export function MoodboardBoard({
 
   const { containerRef, setTileRef, getTileStyle, containerHeight } = useMasonry(layoutItems);
 
+  // Touch-only tap-to-reveal state: only one tile shows its overlay at a
+  // time, and tapping outside every tile (or another tile) dismisses it.
+  const [revealedId, setRevealedId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!revealedId) return;
+
+    function handlePointerDown(e: PointerEvent) {
+      if (e.pointerType !== "touch") return;
+      const target = e.target as HTMLElement;
+      if (target.closest("[data-tile-id]")) return;
+      setRevealedId(null);
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [revealedId]);
+
   return (
     <div className="mx-auto max-w-[1400px] px-4 pb-20 sm:px-12">
       {/*
@@ -40,10 +58,19 @@ export function MoodboardBoard({
        */}
       <div ref={containerRef} className="relative" style={{ height: containerHeight }}>
         {items.map((item) => (
-          <div key={item.id} ref={setTileRef(item.id)} style={getTileStyle(item.id)}>
+          <div
+            key={item.id}
+            ref={setTileRef(item.id)}
+            style={getTileStyle(item.id)}
+            data-tile-id={item.id}
+          >
             <ItemTile
               item={item}
+              revealed={revealedId === item.id}
               onClick={() => onItemClick(item)}
+              onToggleReveal={() =>
+                setRevealedId((current) => (current === item.id ? null : item.id))
+              }
               onToggleBought={() => onToggleBought(item)}
             />
           </div>

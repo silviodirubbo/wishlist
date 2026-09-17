@@ -1,23 +1,107 @@
+import { useRef } from "react";
+import type { PointerEvent as ReactPointerEvent } from "react";
 import type { Item } from "@/lib/types";
 import { formatBoughtDate, formatPrice, formatTargetDate } from "@/lib/format";
 import { placeholderGradient, placeholderHeightClass } from "@/lib/tile-style";
 
+const LONG_PRESS_MS = 500;
+const MOVE_CANCEL_PX = 10;
+
 type ItemTileProps = {
   item: Item;
+  revealed: boolean;
   onClick: () => void;
+  onToggleReveal: () => void;
   onToggleBought: () => void;
 };
 
-export function ItemTile({ item, onClick, onToggleBought }: ItemTileProps) {
+export function ItemTile({
+  item,
+  revealed,
+  onClick,
+  onToggleReveal,
+  onToggleBought,
+}: ItemTileProps) {
   const isBought = item.status === "bought";
   const dateLabel = isBought
     ? formatBoughtDate(item.bought_at)
     : formatTargetDate(item.target_date);
 
+  // Touch only: a single tap reveals the overlay (mirrors desktop hover),
+  // a long-press opens edit instead of a plain tap. Desktop mouse
+  // interaction (pointerType !== "touch") is left to the plain onClick
+  // below, completely untouched by any of this.
+  const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const longPressFiredRef = useRef(false);
+  const startPosRef = useRef<{ x: number; y: number } | null>(null);
+  const suppressNextClickRef = useRef(false);
+
+  function clearLongPressTimer() {
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+  }
+
+  function handlePointerDown(e: ReactPointerEvent<HTMLDivElement>) {
+    if (e.pointerType !== "touch") return;
+    longPressFiredRef.current = false;
+    startPosRef.current = { x: e.clientX, y: e.clientY };
+    longPressTimerRef.current = setTimeout(() => {
+      longPressFiredRef.current = true;
+      suppressNextClickRef.current = true;
+      onClick();
+    }, LONG_PRESS_MS);
+  }
+
+  function handlePointerMove(e: ReactPointerEvent<HTMLDivElement>) {
+    if (e.pointerType !== "touch" || !startPosRef.current) return;
+    const dx = e.clientX - startPosRef.current.x;
+    const dy = e.clientY - startPosRef.current.y;
+    if (Math.hypot(dx, dy) > MOVE_CANCEL_PX) {
+      clearLongPressTimer();
+    }
+  }
+
+  function handlePointerUp(e: ReactPointerEvent<HTMLDivElement>) {
+    if (e.pointerType !== "touch") return;
+    const hadTimer = longPressTimerRef.current !== null;
+    clearLongPressTimer();
+    if (hadTimer && !longPressFiredRef.current) {
+      suppressNextClickRef.current = true;
+      onToggleReveal();
+    }
+    startPosRef.current = null;
+  }
+
+  function handlePointerCancel() {
+    clearLongPressTimer();
+    startPosRef.current = null;
+  }
+
+  // The browser fires a synthetic "ghost click" after every touch
+  // interaction; suppressNextClickRef swallows it so tap/long-press don't
+  // also trigger this handler a second time. Desktop mouse clicks never
+  // set the flag, so they pass straight through.
+  function handleClick() {
+    if (suppressNextClickRef.current) {
+      suppressNextClickRef.current = false;
+      return;
+    }
+    onClick();
+  }
+
   return (
     <div
-      onClick={onClick}
-      className="group relative cursor-pointer overflow-hidden rounded-[14px] bg-sand-light transition-transform duration-150 hover:-translate-y-[3px]"
+      onClick={handleClick}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerCancel}
+      onContextMenu={(e) => e.preventDefault()}
+      className={`group relative cursor-pointer overflow-hidden rounded-[14px] bg-sand-light transition-transform duration-150 hover:-translate-y-[3px] ${
+        revealed ? "is-revealed" : ""
+      }`}
     >
       <div
         className={`w-full bg-cover bg-center ${placeholderHeightClass(item.id)} ${
@@ -49,6 +133,7 @@ export function ItemTile({ item, onClick, onToggleBought }: ItemTileProps) {
           e.stopPropagation();
           onToggleBought();
         }}
+        onPointerDown={(e) => e.stopPropagation()}
         aria-label={isBought ? "Mark as wanted" : "Mark as bought"}
         aria-pressed={isBought}
         className="group/checkbox absolute right-0 bottom-0 flex h-11 w-11 cursor-pointer items-center justify-center"
