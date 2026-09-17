@@ -37,6 +37,7 @@ export function DashboardClient({
   const [modal, setModal] = useState<ModalState>(null);
   const [budgetAmount, setBudgetAmount] = useState(initialBudgetAmount);
   const [budgetCurrency, setBudgetCurrency] = useState(initialBudgetCurrency);
+  const [shuffledOrder, setShuffledOrder] = useState<string[] | null>(null);
 
   const categories = useMemo(
     () =>
@@ -59,6 +60,23 @@ export function DashboardClient({
     if (activeChip === "Bought") return items.filter((i) => i.status === "bought");
     return items.filter((i) => i.category === activeChip);
   }, [items, activeChip]);
+
+  const displayItems = useMemo(() => {
+    if (!shuffledOrder) return filteredItems;
+    const orderIndex = new Map(shuffledOrder.map((id, i) => [id, i]));
+    return [...filteredItems].sort(
+      (a, b) => (orderIndex.get(a.id) ?? Infinity) - (orderIndex.get(b.id) ?? Infinity)
+    );
+  }, [filteredItems, shuffledOrder]);
+
+  function handleShuffle() {
+    const ids = filteredItems.map((item) => item.id);
+    for (let i = ids.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [ids[i], ids[j]] = [ids[j], ids[i]];
+    }
+    setShuffledOrder(ids);
+  }
 
   const spent = useMemo(
     () =>
@@ -117,9 +135,14 @@ export function DashboardClient({
         onAddItem={() => setModal({ mode: "add" })}
         onOpenBudgetSettings={() => setModal({ mode: "budget" })}
       />
-      <FilterChips chips={chips} active={activeChip} onSelect={setActiveChip} />
+      <FilterChips
+        chips={chips}
+        active={activeChip}
+        onSelect={setActiveChip}
+        onShuffle={handleShuffle}
+      />
       <MoodboardBoard
-        items={filteredItems}
+        items={displayItems}
         onItemClick={(item) => setModal({ mode: "edit", item })}
         onToggleBought={handleToggleBought}
         onAddItem={() => setModal({ mode: "add" })}

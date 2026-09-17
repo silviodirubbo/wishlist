@@ -17,7 +17,7 @@ export function ItemTile({ item, onClick, onToggleBought }: ItemTileProps) {
   return (
     <div
       onClick={onClick}
-      className="group relative mb-5 cursor-pointer overflow-hidden rounded-[14px] bg-sand-light break-inside-avoid transition-transform duration-150 hover:-translate-y-[3px]"
+      className="group relative cursor-pointer overflow-hidden rounded-[14px] bg-sand-light transition-transform duration-150 hover:-translate-y-[3px]"
     >
       <div className="relative">
         <div
