@@ -17,7 +17,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "wishlist.",
+  title: "Wishlist",
   description: "A personal wishlist and budget tracker.",
 };
 
