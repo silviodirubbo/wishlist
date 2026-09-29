@@ -7,8 +7,9 @@ import { BudgetSettingsModal } from "@/components/BudgetSettingsModal";
 import { EditItemModal } from "@/components/EditItemModal";
 import { FilterChips } from "@/components/FilterChips";
 import { MoodboardBoard } from "@/components/MoodboardBoard";
+import { ShareModal } from "@/components/ShareModal";
 import { TopBar } from "@/components/TopBar";
-import type { Item } from "@/lib/types";
+import type { Item, ShareLink } from "@/lib/types";
 
 const STATUS_CHIPS = ["All", "Wanted", "Bought"];
 const KNOWN_CATEGORIES = ["Home", "Tech", "Wine & cellar", "Wardrobe"];
@@ -18,12 +19,14 @@ type DashboardClientProps = {
   year: number;
   budgetAmount: number;
   budgetCurrency: string;
+  initialShare: ShareLink | null;
 };
 
 type ModalState =
   | { mode: "add" }
   | { mode: "edit"; item: Item }
   | { mode: "budget" }
+  | { mode: "share" }
   | null;
 
 export function DashboardClient({
@@ -31,12 +34,14 @@ export function DashboardClient({
   year,
   budgetAmount: initialBudgetAmount,
   budgetCurrency: initialBudgetCurrency,
+  initialShare,
 }: DashboardClientProps) {
   const [items, setItems] = useState<Item[]>(initialItems);
   const [activeChip, setActiveChip] = useState("All");
   const [modal, setModal] = useState<ModalState>(null);
   const [budgetAmount, setBudgetAmount] = useState(initialBudgetAmount);
   const [budgetCurrency, setBudgetCurrency] = useState(initialBudgetCurrency);
+  const [share, setShare] = useState<ShareLink | null>(initialShare);
   const [shuffledOrder, setShuffledOrder] = useState<string[] | null>(null);
 
   const categories = useMemo(
@@ -133,6 +138,8 @@ export function DashboardClient({
         total={budgetAmount}
         currency={budgetCurrency}
         onAddItem={() => setModal({ mode: "add" })}
+        onShare={() => setModal({ mode: "share" })}
+        isShared={!!share?.enabled}
         onOpenBudgetSettings={() => setModal({ mode: "budget" })}
       />
       <FilterChips
@@ -164,6 +171,10 @@ export function DashboardClient({
           onUpdated={handleUpdated}
           onDeleted={handleDeleted}
         />
+      )}
+
+      {modal?.mode === "share" && (
+        <ShareModal share={share} onChange={setShare} onClose={() => setModal(null)} />
       )}
 
       {modal?.mode === "budget" && (

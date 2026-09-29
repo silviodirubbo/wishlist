@@ -1,14 +1,15 @@
 import { DashboardClient } from "@/components/DashboardClient";
 import { createClient } from "@/lib/supabase/server";
-import type { Item } from "@/lib/types";
+import type { Item, ShareLink } from "@/lib/types";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
   const year = new Date().getFullYear();
 
-  const [{ data: items }, { data: budget }] = await Promise.all([
+  const [{ data: items }, { data: budget }, { data: share }] = await Promise.all([
     supabase.from("items").select("*").order("created_at", { ascending: false }),
     supabase.from("budget").select("*").eq("year", year).maybeSingle(),
+    supabase.from("share_links").select("token, enabled, title").maybeSingle(),
   ]);
 
   return (
@@ -17,6 +18,7 @@ export default async function DashboardPage() {
       year={year}
       budgetAmount={budget?.amount ?? 0}
       budgetCurrency={budget?.currency ?? "CHF"}
+      initialShare={(share as ShareLink | null) ?? null}
     />
   );
 }

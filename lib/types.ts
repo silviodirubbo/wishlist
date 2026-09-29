@@ -17,6 +17,27 @@ export type Item = {
   created_at: string;
 };
 
+export type ShareLink = {
+  token: string;
+  enabled: boolean;
+  title: string | null;
+};
+
+// The only fields the public share page ever receives (see
+// get_shared_wishlist in the share_links migration).
+export type SharedItem = Pick<
+  Item,
+  | "id"
+  | "name"
+  | "url"
+  | "image_url"
+  | "price"
+  | "currency"
+  | "category"
+  | "priority"
+  | "target_date"
+>;
+
 export type Budget = {
   id: string;
   user_id: string;

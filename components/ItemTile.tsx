@@ -12,7 +12,9 @@ type ItemTileProps = {
   revealed: boolean;
   onClick: () => void;
   onToggleReveal: () => void;
-  onToggleBought: () => void;
+  // Omit to render the tile read-only (no bought checkbox), as on the
+  // public share page.
+  onToggleBought?: () => void;
 };
 
 export function ItemTile({
@@ -128,26 +130,28 @@ export function ItemTile({
         </div>
       )}
 
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onToggleBought();
-        }}
-        onPointerDown={(e) => e.stopPropagation()}
-        aria-label={isBought ? "Mark as wanted" : "Mark as bought"}
-        aria-pressed={isBought}
-        className="group/checkbox absolute right-0 bottom-0 flex h-11 w-11 cursor-pointer items-center justify-center"
-      >
-        <span
-          className={`flex h-[26px] w-[26px] items-center justify-center rounded-full border-2 text-[13px] transition-colors ${
-            isBought
-              ? "border-moss/75 bg-moss/75 text-white group-hover/checkbox:border-moss group-hover/checkbox:bg-moss"
-              : "border-moss/50 bg-white/50 text-moss/80 group-hover/checkbox:border-moss group-hover/checkbox:bg-white group-hover/checkbox:text-moss"
-          }`}
+      {onToggleBought && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleBought();
+          }}
+          onPointerDown={(e) => e.stopPropagation()}
+          aria-label={isBought ? "Mark as wanted" : "Mark as bought"}
+          aria-pressed={isBought}
+          className="group/checkbox absolute right-0 bottom-0 flex h-11 w-11 cursor-pointer items-center justify-center"
         >
-          {isBought ? "✓" : ""}
-        </span>
-      </button>
+          <span
+            className={`flex h-[26px] w-[26px] items-center justify-center rounded-full border-2 text-[13px] transition-colors ${
+              isBought
+                ? "border-moss/75 bg-moss/75 text-white group-hover/checkbox:border-moss group-hover/checkbox:bg-moss"
+                : "border-moss/50 bg-white/50 text-moss/80 group-hover/checkbox:border-moss group-hover/checkbox:bg-white group-hover/checkbox:text-moss"
+            }`}
+          >
+            {isBought ? "✓" : ""}
+          </span>
+        </button>
+      )}
 
       <div className="tile-overlay-caption absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/85 via-ink/35 to-transparent py-4 pr-12 pl-4">
         <div className="mb-1 text-sm font-medium leading-[1.3] text-paper">{item.name}</div>

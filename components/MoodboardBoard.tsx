@@ -11,8 +11,9 @@ const ADD_TILE_ID = "__add-tile__";
 type MoodboardBoardProps = {
   items: Item[];
   onItemClick: (item: Item) => void;
-  onToggleBought: (item: Item) => void;
-  onAddItem: () => void;
+  // Omit both to render a read-only board (public share page).
+  onToggleBought?: (item: Item) => void;
+  onAddItem?: () => void;
 };
 
 export function MoodboardBoard({
@@ -22,8 +23,11 @@ export function MoodboardBoard({
   onAddItem,
 }: MoodboardBoardProps) {
   const layoutItems = useMemo(
-    () => [...items.map((item) => ({ id: item.id })), { id: ADD_TILE_ID }],
-    [items]
+    () => [
+      ...items.map((item) => ({ id: item.id })),
+      ...(onAddItem ? [{ id: ADD_TILE_ID }] : []),
+    ],
+    [items, onAddItem]
   );
 
   const { containerRef, setTileRef, getTileStyle, containerHeight } = useMasonry(layoutItems);
@@ -71,13 +75,15 @@ export function MoodboardBoard({
               onToggleReveal={() =>
                 setRevealedId((current) => (current === item.id ? null : item.id))
               }
-              onToggleBought={() => onToggleBought(item)}
+              onToggleBought={onToggleBought ? () => onToggleBought(item) : undefined}
             />
           </div>
         ))}
-        <div ref={setTileRef(ADD_TILE_ID)} style={getTileStyle(ADD_TILE_ID)}>
-          <AddItemTile onClick={onAddItem} />
-        </div>
+        {onAddItem && (
+          <div ref={setTileRef(ADD_TILE_ID)} style={getTileStyle(ADD_TILE_ID)}>
+            <AddItemTile onClick={onAddItem} />
+          </div>
+        )}
       </div>
     </div>
   );

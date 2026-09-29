@@ -7,6 +7,8 @@ type TopBarProps = {
   total: number;
   currency: string;
   onAddItem: () => void;
+  onShare: () => void;
+  isShared: boolean;
   onOpenBudgetSettings: () => void;
 };
 
@@ -16,6 +18,8 @@ export function TopBar({
   total,
   currency,
   onAddItem,
+  onShare,
+  isShared,
   onOpenBudgetSettings,
 }: TopBarProps) {
   return (
@@ -26,12 +30,20 @@ export function TopBar({
           wishlist<span className="text-sienna">.</span>
         </div>
       </div>
-      <button
-        onClick={onAddItem}
-        className="order-2 ml-auto shrink-0 cursor-pointer rounded-full bg-ink px-4 py-[10px] text-sm font-medium whitespace-nowrap text-paper transition-colors hover:bg-sienna sm:order-3 sm:ml-0 sm:px-5 sm:py-[11px]"
-      >
-        + Add item
-      </button>
+      <div className="order-2 ml-auto flex shrink-0 items-center gap-2 sm:order-3 sm:ml-0">
+        <button
+          onClick={onShare}
+          className="cursor-pointer rounded-full border border-sand px-4 py-[9px] text-sm whitespace-nowrap text-ink transition-colors hover:border-mocha sm:px-5 sm:py-[10px]"
+        >
+          {isShared ? "Shared" : "Share"}
+        </button>
+        <button
+          onClick={onAddItem}
+          className="cursor-pointer rounded-full bg-ink px-4 py-[10px] text-sm font-medium whitespace-nowrap text-paper transition-colors hover:bg-sienna sm:px-5 sm:py-[11px]"
+        >
+          + Add item
+        </button>
+      </div>
       <div className="order-3 w-full sm:order-2 sm:ml-auto sm:w-auto">
         <BudgetIndicator
           year={year}
