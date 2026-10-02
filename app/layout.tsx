@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import { PoweredByTag } from "@/components/PoweredByTag";
 import "./globals.css";
@@ -19,6 +19,11 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Wishlist",
   description: "A personal wishlist and budget tracker.",
+  appleWebApp: { capable: true, title: "Wishlist", statusBarStyle: "default" },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#F4EFE6",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -1,3 +1,4 @@
+import { ExternalLink } from "lucide-react";
 import { useRef } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 import type { Item } from "@/lib/types";
@@ -17,6 +18,16 @@ type ItemTileProps = {
   onToggleBought?: () => void;
 };
 
+function safeHttpUrl(value: string | null): string | null {
+  if (!value) return null;
+  try {
+    const u = new URL(value);
+    return u.protocol === "http:" || u.protocol === "https:" ? u.href : null;
+  } catch {
+    return null;
+  }
+}
+
 export function ItemTile({
   item,
   revealed,
@@ -25,6 +36,7 @@ export function ItemTile({
   onToggleBought,
 }: ItemTileProps) {
   const isBought = item.status === "bought";
+  const productUrl = safeHttpUrl(item.url);
   const dateLabel = isBought
     ? formatBoughtDate(item.bought_at)
     : formatTargetDate(item.target_date);
@@ -124,8 +136,28 @@ export function ItemTile({
         {isBought ? "Bought" : "Wanted"}
       </div>
 
+      {productUrl && (
+        <a
+          href={productUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          onPointerDown={(e) => e.stopPropagation()}
+          onPointerUp={(e) => e.stopPropagation()}
+          aria-label={`View ${item.name} on the product page`}
+          title="View product"
+          className="tile-overlay pointer-events-none absolute top-3 right-3 flex h-[26px] w-[26px] items-center justify-center rounded-full bg-white/90 text-ink transition-colors group-hover:pointer-events-auto group-[.is-revealed]:pointer-events-auto hover:bg-white hover:text-sienna"
+        >
+          <ExternalLink size={13} strokeWidth={2} />
+        </a>
+      )}
+
       {item.priority && (
-        <div className="tile-overlay absolute top-3 right-3 flex h-[26px] w-[26px] items-center justify-center rounded-full bg-white/90 text-[13px] text-sienna">
+        <div
+          className={`tile-overlay absolute top-3 flex h-[26px] w-[26px] items-center justify-center rounded-full bg-white/90 text-[13px] text-sienna ${
+            productUrl ? "right-[44px]" : "right-3"
+          }`}
+        >
           &hearts;
         </div>
       )}

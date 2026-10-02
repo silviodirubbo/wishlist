@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { BudgetIndicator } from "./BudgetIndicator";
+import { InstallAppButton } from "./InstallAppButton";
 
 type TopBarProps = {
   year: number;
@@ -37,6 +38,7 @@ export function TopBar({
         >
           {isShared ? "Shared" : "Share"}
         </button>
+        <InstallAppButton />
         <button
           onClick={onAddItem}
           className="cursor-pointer rounded-full bg-ink px-4 py-[10px] text-sm font-medium whitespace-nowrap text-paper transition-colors hover:bg-sienna sm:px-5 sm:py-[11px]"
