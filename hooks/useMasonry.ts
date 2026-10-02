@@ -6,6 +6,10 @@ import { computeColumnCount, computeColumnWidth, computeLayout } from "@/lib/mas
 
 const GAP = 20;
 const MIN_COLUMN_WIDTH = 260;
+// Phones: two tighter columns instead of one wide one.
+const NARROW_MAX_WIDTH = 560;
+const NARROW_GAP = 12;
+const NARROW_MIN_COLUMN_WIDTH = 130;
 const MAX_COLUMNS = 4;
 const TRANSITION = "transform 450ms cubic-bezier(0.4, 0, 0.2, 1)";
 
@@ -42,8 +46,11 @@ export function useMasonry<T extends MasonryItem>(items: T[]) {
     return () => observer.disconnect();
   }, []);
 
-  const columnCount = computeColumnCount(containerWidth || 1, MIN_COLUMN_WIDTH, GAP, MAX_COLUMNS);
-  const columnWidth = computeColumnWidth(containerWidth || 1, columnCount, GAP);
+  const isNarrow = containerWidth > 0 && containerWidth < NARROW_MAX_WIDTH;
+  const gap = isNarrow ? NARROW_GAP : GAP;
+  const minColumnWidth = isNarrow ? NARROW_MIN_COLUMN_WIDTH : MIN_COLUMN_WIDTH;
+  const columnCount = computeColumnCount(containerWidth || 1, minColumnWidth, gap, MAX_COLUMNS);
+  const columnWidth = computeColumnWidth(containerWidth || 1, columnCount, gap);
 
   // Re-measure and re-lay-out whenever the visible items (order or content,
   // which can change rendered height) or the column geometry change.
@@ -51,13 +58,13 @@ export function useMasonry<T extends MasonryItem>(items: T[]) {
     if (!containerWidth) return;
 
     const heights = items.map((item) => tileRefs.current.get(item.id)?.offsetHeight ?? 0);
-    const layout = computeLayout(heights, columnCount, columnWidth, GAP);
+    const layout = computeLayout(heights, columnCount, columnWidth, gap);
 
     setPositions(new Map(items.map((item, i) => [item.id, layout.positions[i]])));
     setContainerHeight(layout.containerHeight);
     setReady(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [items, columnCount, columnWidth]);
+  }, [items, columnCount, columnWidth, gap]);
 
   const getTileStyle = useCallback(
     (id: string): CSSProperties => {
