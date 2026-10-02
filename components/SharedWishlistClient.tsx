@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useLayoutEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { FilterChips } from "@/components/FilterChips";
 import { MoodboardBoard } from "@/components/MoodboardBoard";
+import { shuffledIds } from "@/lib/shuffle";
 import type { Item, SharedItem } from "@/lib/types";
 
 type SharedWishlistClientProps = {
@@ -44,18 +45,21 @@ export function SharedWishlistClient({ title, items: sharedItems }: SharedWishli
     if (!shuffledOrder) return filtered;
     const orderIndex = new Map(shuffledOrder.map((id, i) => [id, i]));
     return [...filtered].sort(
-      (a, b) => (orderIndex.get(a.id) ?? Infinity) - (orderIndex.get(b.id) ?? Infinity)
+      (a, b) => (orderIndex.get(a.id) ?? -1) - (orderIndex.get(b.id) ?? -1)
     );
   }, [filtered, shuffledOrder]);
 
   function handleShuffle() {
-    const ids = filtered.map((i) => i.id);
-    for (let i = ids.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [ids[i], ids[j]] = [ids[j], ids[i]];
-    }
-    setShuffledOrder(ids);
+    setShuffledOrder(shuffledIds(items));
   }
+
+  // Shuffle on every open, before the first paint. Items not in the order
+  // (e.g. just added) sort to the top.
+  useLayoutEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setShuffledOrder(shuffledIds(items));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function handleItemClick(item: Item) {
     if (item.url) window.open(item.url, "_blank", "noopener,noreferrer");

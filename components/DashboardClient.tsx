@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useLayoutEffect, useMemo, useState } from "react";
 import { toggleItemBoughtAction } from "@/app/actions/items";
 import { AddItemModal } from "@/components/AddItemModal";
 import { BudgetSettingsModal } from "@/components/BudgetSettingsModal";
@@ -9,6 +9,7 @@ import { FilterChips } from "@/components/FilterChips";
 import { MoodboardBoard } from "@/components/MoodboardBoard";
 import { ShareModal } from "@/components/ShareModal";
 import { TopBar } from "@/components/TopBar";
+import { shuffledIds } from "@/lib/shuffle";
 import type { Item, ShareLink } from "@/lib/types";
 
 const STATUS_CHIPS = ["All", "Wanted", "Bought"];
@@ -70,18 +71,21 @@ export function DashboardClient({
     if (!shuffledOrder) return filteredItems;
     const orderIndex = new Map(shuffledOrder.map((id, i) => [id, i]));
     return [...filteredItems].sort(
-      (a, b) => (orderIndex.get(a.id) ?? Infinity) - (orderIndex.get(b.id) ?? Infinity)
+      (a, b) => (orderIndex.get(a.id) ?? -1) - (orderIndex.get(b.id) ?? -1)
     );
   }, [filteredItems, shuffledOrder]);
 
   function handleShuffle() {
-    const ids = filteredItems.map((item) => item.id);
-    for (let i = ids.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [ids[i], ids[j]] = [ids[j], ids[i]];
-    }
-    setShuffledOrder(ids);
+    setShuffledOrder(shuffledIds(items));
   }
+
+  // Shuffle on every open, before the first paint. Items not in the order
+  // (e.g. just added) sort to the top.
+  useLayoutEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setShuffledOrder(shuffledIds(items));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const spent = useMemo(
     () =>
