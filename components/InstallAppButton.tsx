@@ -1,6 +1,5 @@
 "use client";
 
-import { Download } from "lucide-react";
 import { useEffect, useState } from "react";
 
 type BeforeInstallPromptEvent = Event & {
@@ -68,10 +67,9 @@ export function InstallAppButton() {
         onClick={handleClick}
         aria-label="Install Wishlist as an app"
         title="Install app"
-        className="flex cursor-pointer items-center gap-1.5 rounded-full border border-sand px-3.5 py-[9px] text-sm whitespace-nowrap text-ink transition-colors hover:border-mocha sm:px-4 sm:py-[10px]"
+        className="cursor-pointer rounded-full border border-sienna bg-sienna px-4 py-[9px] text-sm font-medium whitespace-nowrap text-white transition-colors hover:border-ink hover:bg-ink sm:px-5 sm:py-[10px]"
       >
-        <Download size={15} strokeWidth={2} />
-        <span className="hidden sm:inline">Install</span>
+        App
       </button>
       {showIosHint && (
         <div
