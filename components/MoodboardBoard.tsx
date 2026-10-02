@@ -61,7 +61,7 @@ export function MoodboardBoard({
        * live one level up instead.
        */}
       <div ref={containerRef} className="relative" style={{ height: containerHeight }}>
-        {items.map((item) => (
+        {items.map((item, index) => (
           <div
             key={item.id}
             ref={setTileRef(item.id)}
@@ -71,6 +71,7 @@ export function MoodboardBoard({
             <ItemTile
               item={item}
               revealed={revealedId === item.id}
+              priority={index < 8}
               onClick={() => onItemClick(item)}
               onToggleReveal={() =>
                 setRevealedId((current) => (current === item.id ? null : item.id))

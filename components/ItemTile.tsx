@@ -13,6 +13,8 @@ type ItemTileProps = {
   revealed: boolean;
   onClick: () => void;
   onToggleReveal: () => void;
+  // First tiles on screen load eagerly; the rest are lazy-loaded.
+  priority?: boolean;
   // Omit to render the tile read-only (no bought checkbox), as on the
   // public share page.
   onToggleBought?: () => void;
@@ -33,6 +35,7 @@ export function ItemTile({
   revealed,
   onClick,
   onToggleReveal,
+  priority = false,
   onToggleBought,
 }: ItemTileProps) {
   const isBought = item.status === "bought";
@@ -118,15 +121,25 @@ export function ItemTile({
       }`}
     >
       <div
-        className={`w-full bg-cover bg-center ${placeholderHeightClass(item.id)} ${
-          isBought ? "saturate-50 brightness-[0.85]" : ""
-        }`}
-        style={
-          item.image_url
-            ? { backgroundImage: `url(${item.image_url})` }
-            : { background: placeholderGradient(item.id) }
-        }
-      />
+        className={`relative w-full overflow-hidden ${placeholderHeightClass(item.id)}`}
+        style={item.image_url ? undefined : { background: placeholderGradient(item.id) }}
+      >
+        {item.image_url && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={item.image_url}
+            alt=""
+            loading={priority ? "eager" : "lazy"}
+            fetchPriority={priority ? "high" : "auto"}
+            decoding="async"
+            referrerPolicy="no-referrer"
+            draggable={false}
+            className={`absolute inset-0 h-full w-full object-cover ${
+              isBought ? "saturate-50 brightness-[0.85]" : ""
+            }`}
+          />
+        )}
+      </div>
 
       <div
         className={`tile-overlay absolute top-3 left-3 inline-flex items-center gap-1 rounded-full px-[10px] py-[5px] text-[11px] text-white backdrop-blur-[6px] ${
