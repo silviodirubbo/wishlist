@@ -36,6 +36,27 @@ export function MoodboardBoard({
   // time, and tapping outside every tile (or another tile) dismisses it.
   const [revealedId, setRevealedId] = useState<string | null>(null);
 
+  // Tiles below the fold are lazy at first so the page opens fast. Once the
+  // page has settled, load every image in the background so a shuffle shows
+  // finished pictures instead of tiles that are still downloading.
+  const [loadAll, setLoadAll] = useState(false);
+  useEffect(() => {
+    const start = () => setLoadAll(true);
+    if (document.readyState === "complete") {
+      const t = setTimeout(start, 800);
+      return () => clearTimeout(t);
+    }
+    let t: ReturnType<typeof setTimeout>;
+    const onLoad = () => {
+      t = setTimeout(start, 800);
+    };
+    window.addEventListener("load", onLoad, { once: true });
+    return () => {
+      window.removeEventListener("load", onLoad);
+      clearTimeout(t);
+    };
+  }, []);
+
   useEffect(() => {
     if (!revealedId) return;
 
@@ -72,6 +93,7 @@ export function MoodboardBoard({
               item={item}
               revealed={revealedId === item.id}
               priority={index < 8}
+              eager={loadAll}
               onClick={() => onItemClick(item)}
               onToggleReveal={() =>
                 setRevealedId((current) => (current === item.id ? null : item.id))

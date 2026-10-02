@@ -29,8 +29,8 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${fraunces.variable} ${inter.variable}`}>
-      <body className="min-h-screen font-sans antialiased">
-        {children}
+      <body className="flex min-h-screen flex-col font-sans antialiased">
+        <div className="flex flex-1 flex-col">{children}</div>
         <PoweredByTag />
       </body>
     </html>

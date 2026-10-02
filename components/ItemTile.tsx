@@ -15,6 +15,8 @@ type ItemTileProps = {
   onToggleReveal: () => void;
   // First tiles on screen load eagerly; the rest are lazy-loaded.
   priority?: boolean;
+  // Load now even if offscreen (used once the page has settled).
+  eager?: boolean;
   // Omit to render the tile read-only (no bought checkbox), as on the
   // public share page.
   onToggleBought?: () => void;
@@ -36,6 +38,7 @@ export function ItemTile({
   onClick,
   onToggleReveal,
   priority = false,
+  eager = false,
   onToggleBought,
 }: ItemTileProps) {
   const isBought = item.status === "bought";
@@ -129,7 +132,7 @@ export function ItemTile({
           <img
             src={item.image_url}
             alt=""
-            loading={priority ? "eager" : "lazy"}
+            loading={priority || eager ? "eager" : "lazy"}
             fetchPriority={priority ? "high" : "auto"}
             decoding="async"
             referrerPolicy="no-referrer"
