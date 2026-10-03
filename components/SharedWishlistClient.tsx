@@ -34,12 +34,17 @@ export function SharedWishlistClient({ title, items: sharedItems }: SharedWishli
     () => Array.from(new Set(items.map((i) => i.category).filter(Boolean) as string[])),
     [items]
   );
-  const chips = categories.length > 1 ? ["All", ...categories] : [];
+  const hasPriority = useMemo(() => items.some((i) => i.priority), [items]);
+  const chips =
+    categories.length > 1 || hasPriority
+      ? ["All", ...(hasPriority ? ["Priority"] : []), ...categories]
+      : [];
 
-  const filtered = useMemo(
-    () => (activeChip === "All" ? items : items.filter((i) => i.category === activeChip)),
-    [items, activeChip]
-  );
+  const filtered = useMemo(() => {
+    if (activeChip === "All") return items;
+    if (activeChip === "Priority") return items.filter((i) => i.priority);
+    return items.filter((i) => i.category === activeChip);
+  }, [items, activeChip]);
 
   const displayItems = useMemo(() => {
     if (!shuffledOrder) return filtered;

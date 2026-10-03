@@ -145,9 +145,9 @@ export function ItemTile({
       </div>
 
       <div
-        className={`tile-overlay absolute top-3 left-3 inline-flex items-center gap-1 rounded-full px-[10px] py-[5px] text-[11px] text-white backdrop-blur-[6px] ${
-          isBought ? "bg-moss/88" : "bg-sienna/88"
-        }`}
+        className={`tile-overlay absolute left-3 inline-flex items-center gap-1 rounded-full px-[10px] py-[5px] text-[11px] text-white backdrop-blur-[6px] ${
+          item.priority ? "top-[46px]" : "top-3"
+        } ${isBought ? "bg-moss/88" : "bg-sienna/88"}`}
       >
         {isBought ? "Bought" : "Wanted"}
       </div>
@@ -170,11 +170,12 @@ export function ItemTile({
 
       {item.priority && (
         <div
-          className={`tile-overlay absolute top-3 flex h-[26px] w-[26px] items-center justify-center rounded-full bg-white/90 text-[13px] text-sienna ${
-            productUrl ? "right-[44px]" : "right-3"
-          }`}
+          data-priority="true"
+          title="Priority"
+          className="absolute top-3 left-3 z-10 inline-flex items-center gap-1 rounded-full bg-sienna px-[10px] py-[5px] text-[11px] font-medium text-white shadow-sm"
         >
-          &hearts;
+          <span aria-hidden="true">&hearts;</span>
+          <span>Priority</span>
         </div>
       )}
 
